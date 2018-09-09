@@ -5,7 +5,6 @@ import FileListItem from './FileListItem';
 
 class FileList extends Component {
     render() {
-        console.log(this.props.files);
         return (
             <div className="card">
                 <ul>
@@ -19,7 +18,7 @@ class FileList extends Component {
 }
 
 const mapStateToProps = state => ({
-    files: state.FileListReducer.files
+    files: state.files
 });
 
 export default connect(mapStateToProps)(FileList);

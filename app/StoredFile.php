@@ -36,4 +36,9 @@ class StoredFile extends Model
     {
         return $this->getFileURL();
     }
+
+    public function deleteFile(): bool
+    {
+        return \Storage::delete($this->getFilePath());
+    }
 }

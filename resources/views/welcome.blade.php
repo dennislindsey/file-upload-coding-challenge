@@ -52,10 +52,37 @@
             padding: 10px 0;
         }
 
-        li a, li span {
+        li a, li span, li button {
             font-size: 1.5em;
             letter-spacing: 1px;
         }
+
+        li button {
+            box-sizing: border-box;
+            background-color: transparent;
+            border: 2px solid #e74c3c;
+            border-radius: 0.6em;
+            color: #e74c3c;
+            cursor: pointer;
+            display: flex;
+            align-self: center;
+            padding: 0.5em 1em;
+            text-decoration: none;
+            text-align: center;
+            text-transform: uppercase;
+            font-family: 'Montserrat', sans-serif;
+            transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
+        }
+
+        li button:hover {
+            box-shadow: 0 0 40px 40px #e74c3c inset;
+        }
+
+        li button:hover,
+        li button:focus {
+             color: #fff;
+             outline: 0;
+         }
 
         .dropzone {
             flex:1;

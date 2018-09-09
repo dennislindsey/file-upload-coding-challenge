@@ -12,6 +12,15 @@ class FileController extends Controller
      * @param Request $request
      * @return Response
      */
+    public function index(Request $request): Response
+    {
+        return response()->json(StoredFile::all()->toArray());
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
     public function store(Request $request): Response
     {
         /** @var StoredFile $storedFile */
@@ -34,5 +43,17 @@ class FileController extends Controller
         }
 
         return response()->json($storedFile->toArray());
+    }
+
+    /**
+     * @param StoredFile $storedFile
+     * @return Response
+     */
+    public function destroy(StoredFile $storedFile): Response
+    {
+        $storedFile->deleteFile();
+        $storedFile->delete();
+
+        return response()->json(['deleted' => true]);
     }
 }

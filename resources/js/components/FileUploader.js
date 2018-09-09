@@ -50,8 +50,8 @@ class FileUploader extends Component {
                     fileID: res.data.id,
                     fileName: res.data.filename,
                     url: res.data.url,
-                    uploadInProgress: true,
                     uploadProgressPercent: 0,
+                    uploadComplete: false,
                     file
                 };
                 this.props.actions.addFiles([file]);
