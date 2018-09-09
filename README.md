@@ -1,13 +1,15 @@
 # Kraken Coding Test
 
-This application is designed to be run anywhere, but for the sake of simplicity I will only provide instructions for building in any environment
+This application is designed to be run anywhere, but for the sake of simplicity I will only provide instructions for building in any environment.
+
+If you need an environment to run this application, I would suggest using either Laravel's [Valet](https://laravel.com/docs/5.7/valet) or [Homestead](https://laravel.com/docs/5.7/homestead) environments.
 
 ### Features
 
 * Upload any number of files asynchronously using chunked uploads
 * Download and delete any files
 * Search by filename and/or file type (MIME type)
-* Laravel API
+* Laravel 5.7 API
 * React + Redux webapp
 * API limit of 500 requests per minute
 * API tests!
