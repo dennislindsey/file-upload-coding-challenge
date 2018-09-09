@@ -2,39 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FileIndexRequest;
+use App\Http\Requests\FileStoreRequest;
+use App\Http\Requests\FileUpdateRequest;
 use App\StoredFile;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\HttpFoundation\Response;
 
 class FileController extends Controller
 {
     /**
-     * @param Request $request
+     * @param FileIndexRequest $request
      * @return Response
      */
-    public function index(Request $request): Response
+    public function index(FileIndexRequest $request): Response
     {
-        return response()->json(StoredFile::all()->toArray());
+        /** @var Collection $files */
+        $files = StoredFile::query()
+            ->when($request->input('search'), function (Builder $builder) use ($request) {
+                $builder->where('filename', 'LIKE', "%{$request->input('search')}%");
+            })
+            ->when($request->input('type'), function (Builder $builder) use ($request) {
+                $builder->where('type', 'LIKE', "%{$request->input('type')}%");
+            })
+            ->get();
+
+        return response()->json($files->toArray());
     }
 
     /**
-     * @param Request $request
+     * @param FileStoreRequest $request
      * @return Response
      */
-    public function store(Request $request): Response
+    public function store(FileStoreRequest $request): Response
     {
         /** @var StoredFile $storedFile */
-        $storedFile = StoredFile::create(['filename' => $request->input('fileName')]);
+        $storedFile = StoredFile::create([
+            'filename' => $request->input('fileName'),
+            'type'     => $request->input('type')
+        ]);
 
         return response()->json($storedFile->toArray());
     }
 
     /**
-     * @param Request    $request
-     * @param StoredFile $storedFile
+     * @param FileUpdateRequest $request
+     * @param StoredFile        $storedFile
      * @return Response
      */
-    public function update(Request $request, StoredFile $storedFile): Response
+    public function update(FileUpdateRequest $request, StoredFile $storedFile): Response
     {
         $storedFile->appendToFile(base64_decode($request->input('chunk')));
 

@@ -4,3 +4,4 @@ export const DELETE_FILE = "DELETE_FILE";
 export const INIT_APP_STARTED = "INIT_APP_STARTED";
 export const INIT_APP_FINISHED = "INIT_APP_FINISHED";
 export const INIT_APP_FAILED = "INIT_APP_FAILED";
+export const REPLACE_FILES = "REPLACE_FILES";

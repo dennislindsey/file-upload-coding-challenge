@@ -14,7 +14,7 @@ class StoredFile extends Model
     public $casts = [
         'upload_completed' => 'boolean',
     ];
-    protected $fillable = ['filename', 'upload_completed'];
+    protected $fillable = ['filename', 'type', 'upload_completed'];
     protected $appends = ['url'];
 
     public function getFilePath(): string

@@ -22968,7 +22968,8 @@ var FileUploader = function (_Component) {
         key: 'createNewFile',
         value: function createNewFile(file) {
             return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post(__WEBPACK_IMPORTED_MODULE_5__config__["baseURL"] + '/api/file', {
-                fileName: file.name
+                fileName: file.name,
+                type: file.type
             });
         }
     }, {
@@ -23046,7 +23047,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return {
         actions: Object(__WEBPACK_IMPORTED_MODULE_4_redux__["b" /* bindActionCreators */])({
             addFiles: __WEBPACK_IMPORTED_MODULE_6__actions__["a" /* addFiles */],
-            updateFileUploadProgress: __WEBPACK_IMPORTED_MODULE_6__actions__["d" /* updateFileUploadProgress */]
+            updateFileUploadProgress: __WEBPACK_IMPORTED_MODULE_6__actions__["e" /* updateFileUploadProgress */]
         }, dispatch)
     };
 };
@@ -26433,6 +26434,7 @@ Circle.defaultProps = __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends_
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(156);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__FileListItem__ = __webpack_require__(148);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__FileSearch__ = __webpack_require__(185);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -26440,6 +26442,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 
 
 
@@ -26461,6 +26464,7 @@ var FileList = function (_Component) {
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
                 { className: 'card' },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__FileSearch__["a" /* default */], null),
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'ul',
                     null,
@@ -26541,7 +26545,7 @@ var FileListItem = function (_Component) {
                 null,
                 this.props.file.uploadComplete ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'a',
-                    { href: this.props.file.url },
+                    { href: this.props.file.url, target: '_blank' },
                     this.props.file.fileName
                 ) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'span',
@@ -28790,13 +28794,10 @@ var FileListReducer = function FileListReducer() {
     var action = arguments[1];
 
     if (action.type === __WEBPACK_IMPORTED_MODULE_0__action_types__["a" /* ADD_FILES */]) {
-        console.log(_extends({}, state, { files: [].concat(_toConsumableArray(state.files), _toConsumableArray(action.payload.map(function (file) {
-                return _extends({}, initialFileState, file);
-            }))) }));
         return _extends({}, state, { files: [].concat(_toConsumableArray(state.files), _toConsumableArray(action.payload.map(function (file) {
                 return _extends({}, initialFileState, file);
             }))) });
-    } else if (action.type === __WEBPACK_IMPORTED_MODULE_0__action_types__["f" /* UPDATE_FILE_UPLOAD_PROGRESS */]) {
+    } else if (action.type === __WEBPACK_IMPORTED_MODULE_0__action_types__["g" /* UPDATE_FILE_UPLOAD_PROGRESS */]) {
         return _extends({}, state, {
             files: state.files.map(function (file) {
                 if (file.fileID == action.payload.fileID) {
@@ -28815,6 +28816,17 @@ var FileListReducer = function FileListReducer() {
                 return file.fileID !== action.payload.fileID;
             })
         });
+    } else if (action.type === __WEBPACK_IMPORTED_MODULE_0__action_types__["f" /* REPLACE_FILES */]) {
+        return _extends({}, state, {
+            files: [].concat(_toConsumableArray(action.payload.map(function (file) {
+                return _extends({}, initialFileState, {
+                    fileID: file.id,
+                    fileName: file.filename,
+                    url: file.url,
+                    uploadComplete: true
+                });
+            })))
+        });
     }
 
     return state;
@@ -28828,17 +28840,19 @@ var FileListReducer = function FileListReducer() {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ADD_FILES; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return UPDATE_FILE_UPLOAD_PROGRESS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return UPDATE_FILE_UPLOAD_PROGRESS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return DELETE_FILE; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return INIT_APP_STARTED; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return INIT_APP_FINISHED; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return INIT_APP_FAILED; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return REPLACE_FILES; });
 var ADD_FILES = "ADD_FILES";
 var UPDATE_FILE_UPLOAD_PROGRESS = "UPDATE_FILE_UPLOAD_PROGRESS";
 var DELETE_FILE = "DELETE_FILE";
 var INIT_APP_STARTED = "INIT_APP_STARTED";
 var INIT_APP_FINISHED = "INIT_APP_FINISHED";
 var INIT_APP_FAILED = "INIT_APP_FAILED";
+var REPLACE_FILES = "REPLACE_FILES";
 
 /***/ }),
 /* 183 */
@@ -28846,9 +28860,10 @@ var INIT_APP_FAILED = "INIT_APP_FAILED";
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return addFiles; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return updateFileUploadProgress; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return updateFileUploadProgress; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return deleteFile; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return initApp; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return replaceFiles; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__action_types__ = __webpack_require__(182);
@@ -28870,7 +28885,7 @@ var addFiles = function addFiles(files) {
 
 var updateFileUploadProgress = function updateFileUploadProgress(fileID, progressPercent) {
     return {
-        type: __WEBPACK_IMPORTED_MODULE_1__action_types__["f" /* UPDATE_FILE_UPLOAD_PROGRESS */],
+        type: __WEBPACK_IMPORTED_MODULE_1__action_types__["g" /* UPDATE_FILE_UPLOAD_PROGRESS */],
         payload: { fileID: fileID, progressPercent: progressPercent }
     };
 };
@@ -28886,7 +28901,12 @@ var initApp = function initApp() {
     return function (dispatch) {
         dispatch(initAppStarted());
 
-        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(__WEBPACK_IMPORTED_MODULE_2__config__["baseURL"] + '/api/file').then(function (res) {
+        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(__WEBPACK_IMPORTED_MODULE_2__config__["baseURL"] + '/api/file', {
+            params: {
+                search: 'screen',
+                type: 'image'
+            }
+        }).then(function (res) {
             dispatch(initAppFinished(res.data));
             dispatch(addFiles(res.data.map(function (file) {
                 return {
@@ -28922,6 +28942,13 @@ var initAppFailed = function initAppFailed(error) {
     };
 };
 
+var replaceFiles = function replaceFiles(files) {
+    return {
+        type: __WEBPACK_IMPORTED_MODULE_1__action_types__["f" /* REPLACE_FILES */],
+        payload: files
+    };
+};
+
 /***/ }),
 /* 184 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -28947,6 +28974,198 @@ var thunk = createThunkMiddleware();
 thunk.withExtraArgument = createThunkMiddleware;
 
 /* harmony default export */ __webpack_exports__["a"] = (thunk);
+
+/***/ }),
+/* 185 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_debounce_promise__ = __webpack_require__(186);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_debounce_promise___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_debounce_promise__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_redux__ = __webpack_require__(156);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux__ = __webpack_require__(152);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__config__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__config___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__config__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__actions__ = __webpack_require__(183);
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+
+
+
+
+
+var FileSearch = function (_Component) {
+    _inherits(FileSearch, _Component);
+
+    function FileSearch(props) {
+        _classCallCheck(this, FileSearch);
+
+        var _this = _possibleConstructorReturn(this, (FileSearch.__proto__ || Object.getPrototypeOf(FileSearch)).call(this, props));
+
+        _this.state = {
+            fileName: '',
+            fileType: ''
+        };
+        return _this;
+    }
+
+    _createClass(FileSearch, [{
+        key: 'handleFileNameChange',
+        value: function handleFileNameChange(e) {
+            var newState = { fileName: e.target.value };
+            this.setState(newState);
+            __WEBPACK_IMPORTED_MODULE_2_debounce_promise___default()(this.performSearch(_extends({}, this.state, newState)), 500);
+        }
+    }, {
+        key: 'handleFileTypeChange',
+        value: function handleFileTypeChange(e) {
+            var newState = { fileType: e.target.value };
+            this.setState(newState);
+            __WEBPACK_IMPORTED_MODULE_2_debounce_promise___default()(this.performSearch(_extends({}, this.state, newState)), 500);
+        }
+    }, {
+        key: 'performSearch',
+        value: function performSearch(args) {
+            var _this2 = this;
+
+            return __WEBPACK_IMPORTED_MODULE_1_axios___default.a.get(__WEBPACK_IMPORTED_MODULE_5__config__["baseURL"] + '/api/file', {
+                params: {
+                    search: args.fileName,
+                    type: args.fileType
+                }
+            }).then(function (res) {
+                return _this2.props.actions.replaceFiles(res.data);
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'div',
+                { className: 'flex-container flex-horizontal flex-between' },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { className: 'search-input', placeholder: 'Search for file names', type: 'text',
+                    onChange: this.handleFileNameChange.bind(this), value: this.state.fileName }),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { className: 'search-input', placeholder: 'Search for file types', type: 'text',
+                    onChange: this.handleFileTypeChange.bind(this), value: this.state.fileType })
+            );
+        }
+    }]);
+
+    return FileSearch;
+}(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return {
+        actions: Object(__WEBPACK_IMPORTED_MODULE_4_redux__["b" /* bindActionCreators */])({
+            replaceFiles: __WEBPACK_IMPORTED_MODULE_6__actions__["d" /* replaceFiles */]
+        }, dispatch)
+    };
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (Object(__WEBPACK_IMPORTED_MODULE_3_react_redux__["b" /* connect */])(null, mapDispatchToProps)(FileSearch));
+
+/***/ }),
+/* 186 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/* global setTimeout, clearTimeout */
+
+module.exports = function debounce(fn) {
+  var wait = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  var lastCallAt = void 0;
+  var deferred = void 0;
+  var timer = void 0;
+  var pendingArgs = [];
+  return function debounced() {
+    var currentWait = getWait(wait);
+    var currentTime = new Date().getTime();
+
+    var isCold = !lastCallAt || currentTime - lastCallAt > currentWait;
+
+    lastCallAt = currentTime;
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    if (isCold && options.leading) {
+      return options.accumulate ? Promise.resolve(fn.call(this, [args])).then(function (result) {
+        return result[0];
+      }) : Promise.resolve(fn.call.apply(fn, [this].concat(args)));
+    }
+
+    if (deferred) {
+      clearTimeout(timer);
+    } else {
+      deferred = defer();
+    }
+
+    pendingArgs.push(args);
+    timer = setTimeout(flush.bind(this), currentWait);
+
+    if (options.accumulate) {
+      var _ret = function () {
+        var argsIndex = pendingArgs.length - 1;
+        return {
+          v: deferred.promise.then(function (results) {
+            return results[argsIndex];
+          })
+        };
+      }();
+
+      if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+    }
+
+    return deferred.promise;
+  };
+
+  function flush() {
+    var thisDeferred = deferred;
+    clearTimeout(timer);
+
+    Promise.resolve(options.accumulate ? fn.call(this, pendingArgs) : fn.apply(this, pendingArgs[pendingArgs.length - 1])).then(thisDeferred.resolve, thisDeferred.reject);
+
+    pendingArgs = [];
+    deferred = null;
+  }
+};
+
+function getWait(wait) {
+  return typeof wait === 'function' ? wait() : wait;
+}
+
+function defer() {
+  var deferred = {};
+  deferred.promise = new Promise(function (resolve, reject) {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+  return deferred;
+}
+//# sourceMappingURL=index.js.map
 
 /***/ })
 /******/ ]);

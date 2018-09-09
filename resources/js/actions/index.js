@@ -6,7 +6,8 @@ import {
     DELETE_FILE,
     INIT_APP_STARTED,
     INIT_APP_FINISHED,
-    INIT_APP_FAILED
+    INIT_APP_FAILED,
+    REPLACE_FILES
 } from '../action-types';
 
 import {baseURL} from '../config';
@@ -29,18 +30,21 @@ export const deleteFile = fileID => ({
 export const initApp = () => dispatch => {
     dispatch(initAppStarted());
 
-    axios.get(baseURL + '/api/file')
-        .then(res => {
-            dispatch(initAppFinished(res.data));
-            dispatch(addFiles(res.data.map(file => ({
-                fileID: file.id,
-                fileName: file.filename,
-                url: file.url,
-                uploadProgressPercent: 0,
-                uploadComplete: true,
-            }))));
-        })
-        .catch(res => dispatch(initAppFailed(res.data)));
+    axios.get(baseURL + '/api/file', {
+        params: {
+            search: 'screen',
+            type: 'image'
+        }
+    }).then(res => {
+        dispatch(initAppFinished(res.data));
+        dispatch(addFiles(res.data.map(file => ({
+            fileID: file.id,
+            fileName: file.filename,
+            url: file.url,
+            uploadProgressPercent: 0,
+            uploadComplete: true,
+        }))));
+    }).catch(res => dispatch(initAppFailed(res.data)));
 };
 
 const initAppStarted = () => ({
@@ -54,4 +58,9 @@ const initAppFinished = () => ({
 const initAppFailed = error => ({
     type: INIT_APP_FAILED,
     payload: {error}
+});
+
+export const replaceFiles = files => ({
+    type: REPLACE_FILES,
+    payload: files
 });

@@ -17,7 +17,8 @@ class FileUploader extends Component {
 
     createNewFile(file) {
         return axios.post(baseURL + '/api/file', {
-            fileName: file.name
+            fileName: file.name,
+            type: file.type
         });
     }
 

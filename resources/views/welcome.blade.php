@@ -35,6 +35,10 @@
             flex-direction: row;
         }
 
+        .flex-end {
+            justify-content: flex-end;
+        }
+
         .card {
             background: #fff;
             border-radius: 5px;
@@ -97,6 +101,14 @@
         .rc-progress-circle {
             width: 2em;
             height: 2em;
+        }
+
+        .search-input {
+            padding: 1em;
+            border-radius: 0.6em;
+            border: 2px solid #e7e7e7;
+            font-size: 1em;
+            line-height: 1em;
         }
     </style>
 </head>
