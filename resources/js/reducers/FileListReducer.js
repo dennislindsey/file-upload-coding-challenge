@@ -7,6 +7,7 @@ const initialState = {
 const initialFileState = {
     fileID: null,
     fileName: '',
+    fileNameOrig: '',
     url: '',
     uploadProgressPercent: 0,
     uploadComplete: false,
@@ -42,6 +43,7 @@ const FileListReducer = (state = initialState, action) => {
                 ...initialFileState,
                 fileID: file.id,
                 fileName: file.filename,
+                fileNameOrig: file.filename_orig,
                 url: file.url,
                 uploadComplete: true
             }))]

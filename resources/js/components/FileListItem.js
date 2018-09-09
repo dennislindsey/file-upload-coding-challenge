@@ -17,8 +17,8 @@ class FileListItem extends Component {
         return (
             <li>
                 {this.props.file.uploadComplete
-                    ? <a href={this.props.file.url} target="_blank">{this.props.file.fileName}</a>
-                    : <span>{this.props.file.fileName}</span>}
+                    ? <a href={this.props.file.url} target="_blank">{this.props.file.fileNameOrig}</a>
+                    : <span>{this.props.file.fileNameOrig}</span>}
                 {!this.props.file.uploadComplete
                     ? <Circle percent={this.props.file.uploadProgressPercent} strokeWidth={3}/>
                     : null}

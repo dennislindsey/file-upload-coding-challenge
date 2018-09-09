@@ -14,12 +14,22 @@ class StoredFile extends Model
     public $casts = [
         'upload_completed' => 'boolean',
     ];
-    protected $fillable = ['filename', 'type', 'upload_completed'];
+    protected $fillable = ['filename_orig', 'filename', 'type', 'upload_completed'];
     protected $appends = ['url'];
+    protected $attributes = ['upload_completed' => false, 'deleted_at' => null];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function (StoredFile $storedFile) {
+            $storedFile->deleteFile();
+        });
+    }
 
     public function getFilePath(): string
     {
-        return 'uploads/' . $this->getKey() . '-' . $this->filename;
+        return 'uploads/' . $this->filename;
     }
 
     public function getFileURL(): string

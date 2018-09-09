@@ -8,7 +8,7 @@ import {baseURL} from '../config';
 import {addFiles, updateFileUploadProgress} from '../actions';
 
 class FileUploader extends Component {
-    uploadChunk(fileID, fileName, endOfFile, chunk) {
+    uploadChunk(fileID, endOfFile, chunk) {
         return axios.patch(baseURL + '/api/file/' + fileID, {
             endOfFile,
             chunk
@@ -36,7 +36,7 @@ class FileUploader extends Component {
 
                     offset += chunkSize;
 
-                    this.uploadChunk(file.fileID, file.filename, offset >= file.file.size, window.btoa(e.target.result))
+                    this.uploadChunk(file.fileID, offset >= file.file.size, window.btoa(e.target.result))
                         .then(res => {
                             this.props.actions.updateFileUploadProgress(file.fileID, Math.min(parseInt(offset / file.file.size * 100), 100))
                             if (offset < file.file.size) {
@@ -50,6 +50,7 @@ class FileUploader extends Component {
                 file = {
                     fileID: res.data.id,
                     fileName: res.data.filename,
+                    fileNameOrig: res.data.filename_orig,
                     url: res.data.url,
                     uploadProgressPercent: 0,
                     uploadComplete: false,

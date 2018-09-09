@@ -40,6 +40,7 @@ export const initApp = () => dispatch => {
         dispatch(addFiles(res.data.map(file => ({
             fileID: file.id,
             fileName: file.filename,
+            fileNameOrig: file.filename_orig,
             url: file.url,
             uploadProgressPercent: 0,
             uploadComplete: true,

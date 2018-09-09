@@ -8,6 +8,7 @@ use App\Http\Requests\FileUpdateRequest;
 use App\StoredFile;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 
 class FileController extends Controller
@@ -21,7 +22,7 @@ class FileController extends Controller
         /** @var Collection $files */
         $files = StoredFile::query()
             ->when($request->input('search'), function (Builder $builder) use ($request) {
-                $builder->where('filename', 'LIKE', "%{$request->input('search')}%");
+                $builder->where('filename_orig', 'LIKE', "%{$request->input('search')}%");
             })
             ->when($request->input('type'), function (Builder $builder) use ($request) {
                 $builder->where('type', 'LIKE', "%{$request->input('type')}%");
@@ -37,10 +38,14 @@ class FileController extends Controller
      */
     public function store(FileStoreRequest $request): Response
     {
+        $ext = explode('.', $request->input('fileName'));
+        $ext = end($ext);
+
         /** @var StoredFile $storedFile */
         $storedFile = StoredFile::create([
-            'filename' => $request->input('fileName'),
-            'type'     => $request->input('type')
+            'filename_orig' => $request->input('fileName'),
+            'filename'      => Uuid::uuid4() . '.' . $ext,
+            'type'          => $request->input('type')
         ]);
 
         return response()->json($storedFile->toArray());
@@ -57,6 +62,8 @@ class FileController extends Controller
 
         if ($request->input('endOfFile')) {
             $storedFile->update(['upload_completed' => true]);
+        } else {
+            $storedFile->touch();
         }
 
         return response()->json($storedFile->toArray());
@@ -68,7 +75,6 @@ class FileController extends Controller
      */
     public function destroy(StoredFile $storedFile): Response
     {
-        $storedFile->deleteFile();
         $storedFile->delete();
 
         return response()->json(['deleted' => true]);

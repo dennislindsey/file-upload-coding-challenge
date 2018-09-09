@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,11 +11,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::get('file', 'FileController@index');
-Route::post('file', 'FileController@store');
-Route::patch('file/{storedFile}', 'FileController@update');
-Route::delete('file/{storedFile}', 'FileController@destroy');
+Route::get('file', 'FileController@index')->name('api.file.index');
+Route::post('file', 'FileController@store')->name('api.file.store');
+Route::patch('file/{storedFile}', 'FileController@update')->name('api.file.update');
+Route::delete('file/{storedFile}', 'FileController@destroy')->name('api.file.destroy');
