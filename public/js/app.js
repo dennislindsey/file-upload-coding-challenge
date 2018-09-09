@@ -42690,66 +42690,61 @@ var FileUploader = function (_Component) {
     _createClass(FileUploader, [{
         key: 'uploadChunk',
         value: function uploadChunk(fileID, fileName, endOfFile, chunk) {
-            return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post(__WEBPACK_IMPORTED_MODULE_5__config__["baseURL"] + '/api/file', {
-                fileID: fileID,
-                fileName: fileName,
+            return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.patch(__WEBPACK_IMPORTED_MODULE_5__config__["baseURL"] + '/api/file/' + fileID, {
                 endOfFile: endOfFile,
                 chunk: chunk
             });
         }
     }, {
-        key: 'abortUpload',
-        value: function abortUpload() {}
+        key: 'createNewFile',
+        value: function createNewFile(file) {
+            return __WEBPACK_IMPORTED_MODULE_2_axios___default.a.post(__WEBPACK_IMPORTED_MODULE_5__config__["baseURL"] + '/api/file', {
+                fileName: file.name
+            });
+        }
     }, {
         key: 'onDrop',
         value: function onDrop(acceptedFiles, rejectedFiles) {
             var _this2 = this;
 
-            if (acceptedFiles) {
-                acceptedFiles = acceptedFiles.map(function (file) {
-                    return {
-                        fileID: Math.random().toString(36).substring(7),
+            acceptedFiles.forEach(function (file) {
+                return _this2.createNewFile(file).then(function (res) {
+                    var reader = new FileReader();
+                    var chunkSize = 1024 * 1024;
+                    var offset = 0;
+
+                    reader.onloadend = function (e) {
+                        if (e.target.readyState != FileReader.DONE) {
+                            return;
+                        }
+
+                        offset += chunkSize;
+
+                        _this2.uploadChunk(file.fileID, file.filename, offset >= file.file.size, window.btoa(e.target.result)).then(function (res) {
+                            _this2.props.actions.updateFileUploadProgress(file.fileID, Math.min(parseInt(offset / file.file.size * 100), 100));
+                            if (offset < file.file.size) {
+                                reader.readAsBinaryString(file.file.slice(offset, Math.min(offset + chunkSize, file.file.size)));
+                            }
+                        });
+                    };
+                    reader.onabort = function () {
+                        return console.log('file reading was aborted');
+                    };
+                    reader.onerror = function () {
+                        return console.log('file reading has failed');
+                    };
+
+                    file = {
+                        fileID: res.data.id,
+                        fileName: res.data.filename,
+                        url: res.data.url,
+                        uploadInProgress: true,
+                        uploadProgressPercent: 0,
                         file: file
                     };
+                    _this2.props.actions.addFiles([file]);
+                    reader.readAsBinaryString(file.file.slice(offset, Math.min(offset + chunkSize, file.file.size)));
                 });
-                this.props.actions.addFiles(acceptedFiles.map(function (file) {
-                    return {
-                        fileID: file.fileID,
-                        fileName: file.file.name,
-                        uploadInProgress: true,
-                        uploadProgressPercent: 0
-                    };
-                }));
-            }
-
-            acceptedFiles.forEach(function (acceptedFile) {
-                var reader = new FileReader();
-                var chunkSize = 1024 * 1024;
-                var offset = 0;
-
-                reader.onloadend = function (e) {
-                    if (e.target.readyState != FileReader.DONE) {
-                        return;
-                    }
-
-                    offset += chunkSize;
-
-                    _this2.uploadChunk(acceptedFile.fileID, acceptedFile.file.name, offset >= acceptedFile.file.size, window.btoa(e.target.result)).then(function (res) {
-                        _this2.props.actions.updateFileUploadProgress(acceptedFile.fileID, Math.min(parseInt(offset / acceptedFile.file.size * 100), 100));
-                        if (offset < acceptedFile.file.size) {
-                            reader.readAsBinaryString(acceptedFile.file.slice(offset, Math.min(offset + chunkSize, acceptedFile.file.size)));
-                        }
-                    });
-                };
-                reader.onabort = function () {
-                    return console.log('file reading was aborted');
-                };
-                reader.onerror = function () {
-                    return console.log('file reading has failed');
-                };
-                console.log(acceptedFile);
-
-                reader.readAsBinaryString(acceptedFile.file.slice(offset, Math.min(offset + chunkSize, acceptedFile.file.size)));
             });
         }
     }, {
@@ -46194,6 +46189,7 @@ var FileList = function (_Component) {
     _createClass(FileList, [{
         key: 'render',
         value: function render() {
+            console.log(this.props.files);
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
                 { className: 'card' },
@@ -46254,9 +46250,13 @@ var FileListItem = function (_Component) {
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'li',
                 null,
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                this.props.file.uploadComplete ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'a',
                     { href: this.props.file.url },
+                    this.props.file.fileName
+                ) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'span',
+                    null,
                     this.props.file.fileName
                 ),
                 this.props.file.uploadInProgress || true ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_rc_progress__["a" /* Circle */], { percent: this.props.file.uploadProgressPercent, strokeWidth: 3 }) : null
@@ -48483,7 +48483,8 @@ var FileListReducer = function FileListReducer() {
             files: state.files.map(function (file) {
                 if (file.fileID == action.payload.fileID) {
                     return _extends({}, file, {
-                        uploadProgressPercent: action.payload.progressPercent
+                        uploadProgressPercent: action.payload.progressPercent,
+                        uploadComplete: action.payload.progressPercent == 100
                     });
                 }
 

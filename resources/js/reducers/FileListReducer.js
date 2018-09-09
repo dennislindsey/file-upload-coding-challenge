@@ -14,7 +14,8 @@ const FileListReducer = (state = initialState, action) => {
                 if (file.fileID == action.payload.fileID) {
                     return {
                         ...file,
-                        uploadProgressPercent: action.payload.progressPercent
+                        uploadProgressPercent: action.payload.progressPercent,
+                        uploadComplete: action.payload.progressPercent == 100
                     };
                 }
 

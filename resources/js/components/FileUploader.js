@@ -9,57 +9,55 @@ import {addFiles, updateFileUploadProgress} from '../actions';
 
 class FileUploader extends Component {
     uploadChunk(fileID, fileName, endOfFile, chunk) {
-        return axios.post(baseURL + '/api/file', {
-            fileID,
-            fileName,
+        return axios.patch(baseURL + '/api/file/' + fileID, {
             endOfFile,
             chunk
         });
     }
 
-    abortUpload() {
+    createNewFile(file) {
+        return axios.post(baseURL + '/api/file', {
+            fileName: file.name
+        });
     }
 
     onDrop(acceptedFiles, rejectedFiles) {
-        if (acceptedFiles) {
-            acceptedFiles = acceptedFiles.map(file => ({
-                fileID: Math.random().toString(36).substring(7),
-                file
-            }));
-            this.props.actions.addFiles(acceptedFiles.map(file => ({
-                fileID: file.fileID,
-                fileName: file.file.name,
-                uploadInProgress: true,
-                uploadProgressPercent: 0
-            })));
-        }
+        acceptedFiles.forEach(file => this.createNewFile(file)
+            .then(res => {
+                const reader = new FileReader();
+                const chunkSize = 1024 * 1024;
+                let offset = 0;
 
-        acceptedFiles.forEach(acceptedFile => {
-            const reader = new FileReader();
-            const chunkSize = 1024 * 1024;
-            let offset = 0;
+                reader.onloadend = e => {
+                    if (e.target.readyState != FileReader.DONE) {
+                        return;
+                    }
 
-            reader.onloadend = e => {
-                if (e.target.readyState != FileReader.DONE) {
-                    return;
-                }
+                    offset += chunkSize;
 
-                offset += chunkSize;
+                    this.uploadChunk(file.fileID, file.filename, offset >= file.file.size, window.btoa(e.target.result))
+                        .then(res => {
+                            this.props.actions.updateFileUploadProgress(file.fileID, Math.min(parseInt(offset / file.file.size * 100), 100))
+                            if (offset < file.file.size) {
+                                reader.readAsBinaryString(file.file.slice(offset, Math.min(offset + chunkSize, file.file.size)));
+                            }
+                        });
+                };
+                reader.onabort = () => console.log('file reading was aborted');
+                reader.onerror = () => console.log('file reading has failed');
 
-                this.uploadChunk(acceptedFile.fileID, acceptedFile.file.name, offset >= acceptedFile.file.size, window.btoa(e.target.result))
-                    .then(res => {
-                        this.props.actions.updateFileUploadProgress(acceptedFile.fileID, Math.min(parseInt(offset / acceptedFile.file.size * 100), 100))
-                        if (offset < acceptedFile.file.size) {
-                            reader.readAsBinaryString(acceptedFile.file.slice(offset, Math.min(offset + chunkSize, acceptedFile.file.size)));
-                        }
-                    });
-            };
-            reader.onabort = () => console.log('file reading was aborted');
-            reader.onerror = () => console.log('file reading has failed');
-            console.log(acceptedFile);
-
-            reader.readAsBinaryString(acceptedFile.file.slice(offset, Math.min(offset + chunkSize, acceptedFile.file.size)));
-        })
+                file = {
+                    fileID: res.data.id,
+                    fileName: res.data.filename,
+                    url: res.data.url,
+                    uploadInProgress: true,
+                    uploadProgressPercent: 0,
+                    file
+                };
+                this.props.actions.addFiles([file]);
+                reader.readAsBinaryString(file.file.slice(offset, Math.min(offset + chunkSize, file.file.size)));
+            })
+        );
     }
 
     render() {

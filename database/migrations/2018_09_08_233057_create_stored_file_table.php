@@ -15,7 +15,10 @@ class CreateStoredFileTable extends Migration
     {
         Schema::create('stored_file', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('filename');
+            $table->boolean('upload_completed')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

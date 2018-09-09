@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\StoredFile;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,12 +14,25 @@ class FileController extends Controller
      */
     public function store(Request $request): Response
     {
-        $file = 'uploads/' . $request->input('fileID') . '-' . $request->input('fileName');
-        \Storage::append($file, base64_decode($request->input('chunk')), '');
+        /** @var StoredFile $storedFile */
+        $storedFile = StoredFile::create(['filename' => $request->input('fileName')]);
 
-        return response()->json([
-            'finished' => $request->input('endOfFile', false),
-            'url'      => \Storage::url($file),
-        ]);
+        return response()->json($storedFile->toArray());
+    }
+
+    /**
+     * @param Request    $request
+     * @param StoredFile $storedFile
+     * @return Response
+     */
+    public function update(Request $request, StoredFile $storedFile): Response
+    {
+        $storedFile->appendToFile(base64_decode($request->input('chunk')));
+
+        if ($request->input('endOfFile')) {
+            $storedFile->update(['upload_completed' => true]);
+        }
+
+        return response()->json($storedFile->toArray());
     }
 }

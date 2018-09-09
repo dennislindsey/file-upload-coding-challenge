@@ -52,7 +52,7 @@
             padding: 10px 0;
         }
 
-        li a {
+        li a, li span {
             font-size: 1.5em;
             letter-spacing: 1px;
         }

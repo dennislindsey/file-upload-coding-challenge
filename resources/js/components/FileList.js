@@ -5,6 +5,7 @@ import FileListItem from './FileListItem';
 
 class FileList extends Component {
     render() {
+        console.log(this.props.files);
         return (
             <div className="card">
                 <ul>
