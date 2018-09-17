@@ -1,4 +1,4 @@
-# Kraken Coding Test
+# File Upload Coding Test
 
 This application is designed to be run anywhere, but for the sake of simplicity I will only provide instructions for building in any environment.
 
@@ -25,7 +25,7 @@ If you need an environment to run this application, I would suggest using either
 * [Node and NPM](https://nodejs.org/en/)
 
 ### Build:
-1. Clone the repository `git clone git@bitbucket.org:debl100588/kraken-coding-test.git`
+1. Clone the repository `git clone git@github.com:dennislindsey/file-upload-coding-test.git`
     1. Alternatively, unzip the repository provided via secure email
 2. Execute the following commands in your terminal:
     1.  ```
