@@ -42,6 +42,6 @@ If you need an environment to run this application, I would suggest using either
         npm run dev
         ```
 6. If you're using Valet or another service, secure the API behind HTTPS:
-    1. `cd /path/to/project && valet secure kraken-coding-test`
+    1. `cd /path/to/project && valet secure file-upload-coding-test`
 7. Start your local server
     1. `php artisan serve` or whatever environment-specific commands/tools you need
